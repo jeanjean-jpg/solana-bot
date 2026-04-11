@@ -1,0 +1,12 @@
+{
+  "name": "solana-bot",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev:dashboard": "pnpm --filter dashboard dev",
+    "dev:bot": "pnpm --filter bot dev",
+    "build:dashboard": "pnpm --filter dashboard build",
+    "build:bot": "pnpm --filter bot build"
+  },
+  "packageManager": "pnpm@9.0.0"
+}

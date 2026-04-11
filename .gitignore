@@ -1,0 +1,10 @@
+node_modules/
+.env
+.env.local
+*.env
+dist/
+.next/
+bot/data/
+*.db
+logs/
+.pnpm-store/
