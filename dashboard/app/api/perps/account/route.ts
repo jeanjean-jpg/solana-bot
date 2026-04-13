@@ -1,16 +1,12 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { getAdminClient } from "@/lib/supabase/admin";
 
 /**
  * Returns Drift account stats from bot_state.risk_config
  * The bot engine syncs these periodically.
  */
 export async function GET() {
+  const supabase = getAdminClient();
   const { data, error } = await supabase
     .from("bot_state")
     .select("risk_config")

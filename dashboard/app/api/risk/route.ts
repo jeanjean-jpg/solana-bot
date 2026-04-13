@@ -1,12 +1,8 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { getAdminClient } from "@/lib/supabase/admin";
 
 export async function PATCH(req: Request) {
+  const supabase = getAdminClient();
   const body = await req.json();
   const { error } = await supabase
     .from("bot_state")

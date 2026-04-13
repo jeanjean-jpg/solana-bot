@@ -1,10 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { getAdminClient } from "@/lib/supabase/admin";
 
 export async function PATCH(
   req: Request,
@@ -17,6 +12,7 @@ export async function PATCH(
     is_enabled?: boolean;
   };
 
+  const supabase = getAdminClient();
   const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
   if (body.wallet_id !== undefined) updates.wallet_id = body.wallet_id;
   if (body.config !== undefined) updates.config = body.config;

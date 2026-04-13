@@ -1,17 +1,13 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { getAdminClient } from "@/lib/supabase/admin";
 
 /**
  * Manual swap endpoint.
  * Writes a swap intent to bot_state.manual_trigger — the bot engine picks it up and executes.
  * Private keys never leave the bot engine.
  */
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
 export async function POST(req: Request) {
+  const supabase = getAdminClient();
   const body = await req.json() as {
     inputMint: string;
     outputMint: string;
