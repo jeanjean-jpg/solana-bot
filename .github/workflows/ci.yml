@@ -14,16 +14,13 @@ jobs:
         working-directory: bot
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 9
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: pnpm
-          cache-dependency-path: bot/pnpm-lock.yaml
-      - run: pnpm install
-      - run: pnpm test
+          node-version: 24
+          cache: npm
+          cache-dependency-path: bot/package-lock.json
+      - run: npm ci
+      - run: npm test
         env:
           HELIUS_API_KEY: test
           HELIUS_RPC_URL: https://mainnet.helius-rpc.com/?api-key=test
@@ -39,16 +36,13 @@ jobs:
         working-directory: dashboard
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 9
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: pnpm
-          cache-dependency-path: dashboard/pnpm-lock.yaml
-      - run: pnpm install
-      - run: pnpm build
+          node-version: 24
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+      - run: npm ci
+      - run: npm run build
         env:
           NEXT_PUBLIC_SUPABASE_URL: https://test.supabase.co
           NEXT_PUBLIC_SUPABASE_ANON_KEY: test
