@@ -11,11 +11,20 @@ export interface Wallet {
   created_at: string;
 }
 
+export interface RiskConfig {
+  max_position_size_pct: number;
+  max_open_positions: number;
+  daily_loss_limit_usd: number;
+  circuit_breaker_losses: number;
+}
+
 export interface BotState {
   id: number;
   is_running: boolean;
   last_heartbeat: string | null;
   active_strategy_count: number;
+  risk_config: RiskConfig | null;
+  manual_trigger: Record<string, unknown> | null;
 }
 
 export interface Strategy {
