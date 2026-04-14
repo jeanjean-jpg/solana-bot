@@ -23,15 +23,19 @@ export function useStrategies() {
   }, [refetch]);
 
   async function toggleStrategy(id: string, enabled: boolean) {
+    // Optimistic update — reflect change immediately in UI
+    setStrategies(prev => prev.map(s => s.id === id ? { ...s, is_enabled: enabled } : s));
     await fetch(`/api/strategies/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ is_enabled: enabled }),
     });
-    // realtime will update state
+    // realtime will sync from server to confirm
   }
 
   async function saveStrategyConfig(id: string, config: Record<string, unknown>, walletId: string | null) {
+    // Optimistic update for wallet assignment
+    setStrategies(prev => prev.map(s => s.id === id ? { ...s, config, wallet_id: walletId } : s));
     await fetch(`/api/strategies/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
