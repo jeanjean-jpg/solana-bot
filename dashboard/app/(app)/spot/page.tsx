@@ -5,11 +5,14 @@ import { createClient } from "@/lib/supabase/client";
 import { SwapForm } from "@/components/spot/swap-form";
 import { DcaPositions } from "@/components/spot/dca-positions";
 import { SpotPositions } from "@/components/spot/spot-positions";
+import { SpotStrategyControls } from "@/components/spot/strategy-controls";
+import { useStrategies } from "@/hooks/use-strategies";
 import type { Position, Wallet } from "@/lib/types";
 
 export default function SpotPage() {
   const [positions, setPositions] = useState<Position[]>([]);
   const [wallets, setWallets] = useState<Wallet[]>([]);
+  const { strategies, toggleStrategy } = useStrategies();
   const supabase = createClient();
 
   useEffect(() => {
@@ -39,6 +42,11 @@ export default function SpotPage() {
         <h1 className="text-2xl font-bold">Spot Trading</h1>
         <p className="text-muted-foreground text-sm">Manual swaps via Jupiter + DCA position management</p>
       </div>
+      <SpotStrategyControls
+        strategies={strategies}
+        wallets={wallets}
+        onToggle={toggleStrategy}
+      />
       <SwapForm wallets={wallets} />
       <DcaPositions positions={positions} />
       <SpotPositions positions={positions} />
