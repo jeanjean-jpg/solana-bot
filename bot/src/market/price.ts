@@ -1,6 +1,6 @@
 import { logger } from "../core/logger.js";
 
-const JUPITER_PRICE_URL = "https://price.jup.ag/v4/price";
+const JUPITER_PRICE_URL = "https://api.jup.ag/price/v2";
 
 export interface TokenPrice {
   mint: string;
