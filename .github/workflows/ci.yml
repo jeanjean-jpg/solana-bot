@@ -27,7 +27,7 @@ jobs:
           SUPABASE_URL: https://test.supabase.co
           SUPABASE_SERVICE_ROLE_KEY: test
           WALLET_ENCRYPTION_KEY: 12345678901234567890123456789012
-          NODE_ENV: test
+          NODE_ENV: development
 
   test-dashboard:
     runs-on: ubuntu-latest
