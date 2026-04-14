@@ -16,15 +16,23 @@ async function rpc(method: string, params: unknown[]) {
   return res.json() as Promise<{ result: unknown }>;
 }
 
+const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+const USDT_MINT = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB";
+
 async function getTokenPrices(mints: string[]): Promise<Record<string, number>> {
-  if (!mints.length) return {};
-  const res = await fetch(`${JUPITER_PRICE_URL}?ids=${mints.join(",")}`);
-  if (!res.ok) return {};
-  const json = await res.json() as { data: Record<string, { price: number }> };
-  const out: Record<string, number> = {};
-  for (const [mint, info] of Object.entries(json.data ?? {})) {
-    out[mint] = info.price;
-  }
+  // Stablecoins are always $1 — Jupiter won't price them vs themselves
+  const out: Record<string, number> = { [USDC_MINT]: 1, [USDT_MINT]: 1 };
+  const toFetch = mints.filter(m => m !== USDC_MINT && m !== USDT_MINT);
+  if (!toFetch.length) return out;
+  try {
+    const res = await fetch(`${JUPITER_PRICE_URL}?ids=${toFetch.join(",")}`);
+    if (!res.ok) return out;
+    // v2 API returns price as a string
+    const json = await res.json() as { data: Record<string, { price: string | number }> };
+    for (const [mint, info] of Object.entries(json.data ?? {})) {
+      out[mint] = Number(info.price) || 0;
+    }
+  } catch { /* return what we have */ }
   return out;
 }
 
