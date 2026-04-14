@@ -26,7 +26,7 @@ jobs:
           HELIUS_RPC_URL: https://mainnet.helius-rpc.com/?api-key=test
           SUPABASE_URL: https://test.supabase.co
           SUPABASE_SERVICE_ROLE_KEY: test
-          WALLET_ENCRYPTION_KEY: 12345678901234567890123456789012
+          WALLET_ENCRYPTION_KEY: "abcdef1234567890abcdef1234567890"
           NODE_ENV: development
 
   test-dashboard:
