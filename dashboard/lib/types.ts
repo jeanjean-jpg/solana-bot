@@ -6,6 +6,7 @@ export type AlertType = "fill" | "sl_hit" | "tp_hit" | "error" | "circuit_breake
 export interface Wallet {
   id: string;
   label: string;
+  public_key: string | null;
   cold_wallet_address: string | null;
   is_active: boolean;
   created_at: string;
