@@ -4,7 +4,7 @@ import { getAdminClient } from "@/lib/supabase/admin";
 const HELIUS_RPC = `https://mainnet.helius-rpc.com/?api-key=${process.env.HELIUS_API_KEY}`;
 const LAMPORTS_PER_SOL = 1_000_000_000;
 const TOKEN_PROGRAM_ID = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
-const JUPITER_PRICE_URL = "https://api.jup.ag/price/v2";
+const JUPITER_PRICE_URL = "https://price.jup.ag/v6/price";
 
 async function rpc(method: string, params: unknown[]) {
   const res = await fetch(HELIUS_RPC, {
