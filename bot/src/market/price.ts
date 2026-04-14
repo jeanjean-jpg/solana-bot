@@ -1,29 +1,34 @@
 import { logger } from "../core/logger.js";
 
-const JUPITER_PRICE_URL = "https://price.jup.ag/v6/price";
-
-export interface TokenPrice {
-  mint: string;
-  price: number; // USD
-}
+const DEXSCREENER_URL = "https://api.dexscreener.com/latest/dex/tokens";
 
 export async function getTokenPrice(mint: string): Promise<number> {
-  const res = await fetch(`${JUPITER_PRICE_URL}?ids=${mint}`);
+  const res = await fetch(`${DEXSCREENER_URL}/${mint}`);
   if (!res.ok) throw new Error(`Price fetch failed: ${res.status}`);
-  const json = await res.json() as { data: Record<string, { price: number }> };
-  const price = json.data[mint]?.price;
-  if (price == null) throw new Error(`No price for mint ${mint}`);
+  const json = await res.json() as { pairs: Array<{ priceUsd: string; liquidity?: { usd: number } }> };
+  const pairs = json.pairs ?? [];
+  if (!pairs.length) throw new Error(`No price data for mint ${mint}`);
+  // Pick the pair with highest liquidity
+  const best = pairs.sort((a, b) => (b.liquidity?.usd ?? 0) - (a.liquidity?.usd ?? 0))[0];
+  const price = parseFloat(best.priceUsd ?? "0");
   logger.debug({ mint, price }, "Token price fetched");
   return price;
 }
 
 export async function getTokenPrices(mints: string[]): Promise<Record<string, number>> {
-  const res = await fetch(`${JUPITER_PRICE_URL}?ids=${mints.join(",")}`);
+  if (!mints.length) return {};
+  // DexScreener accepts up to ~30 comma-separated addresses
+  const res = await fetch(`${DEXSCREENER_URL}/${mints.join(",")}`);
   if (!res.ok) throw new Error(`Price fetch failed: ${res.status}`);
-  const json = await res.json() as { data: Record<string, { price: number }> };
+  const json = await res.json() as { pairs: Array<{ baseToken: { address: string }; priceUsd: string; liquidity?: { usd: number } }> };
+  const pairs = json.pairs ?? [];
   const result: Record<string, number> = {};
-  for (const mint of mints) {
-    if (json.data[mint]) result[mint] = json.data[mint].price;
+  for (const pair of pairs) {
+    const addr = pair.baseToken?.address;
+    if (!addr) continue;
+    const price = parseFloat(pair.priceUsd ?? "0");
+    // Keep the highest-liquidity price per mint
+    if (!result[addr] || price > 0) result[addr] = price;
   }
   return result;
 }
