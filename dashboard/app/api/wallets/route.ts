@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createCipheriv, randomBytes } from "crypto";
-import { Keypair } from "@solana/web3.js";
 import bs58 from "bs58";
 import { getAdminClient } from "@/lib/supabase/admin";
 
@@ -16,9 +15,15 @@ function encryptKey(privateKeyBase58: string, encryptionKey: string): string {
   return iv.toString("hex") + ":" + encrypted.toString("base64");
 }
 
+/**
+ * A Solana keypair encoded as bs58 is 64 bytes:
+ * bytes 0-31 = ed25519 seed, bytes 32-63 = public key.
+ * No @solana/web3.js needed.
+ */
 function derivePublicKey(privateKeyBase58: string): string {
-  const secretKey = bs58.decode(privateKeyBase58);
-  return Keypair.fromSecretKey(secretKey).publicKey.toBase58();
+  const keyBytes = bs58.decode(privateKeyBase58);
+  if (keyBytes.length !== 64) throw new Error("Expected 64-byte keypair");
+  return bs58.encode(keyBytes.slice(32));
 }
 
 export async function POST(req: NextRequest) {
